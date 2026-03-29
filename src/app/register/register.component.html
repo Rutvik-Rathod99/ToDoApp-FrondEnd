@@ -1,0 +1,40 @@
+<div class="register-container">
+    <!-- Loader Overlay -->
+    <div *ngIf="isLoading" class="loader-overlay">
+        <div class="spinner"></div>
+        <p>Creating account...</p>
+    </div>
+
+    <div class="register-card" [class.loading]="isLoading">
+        <h2 class="text-center mb-4">Create Account</h2>
+        <form>
+            <div class="mb-3">
+                <label class="form-label">Email*</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="email" class="form-control" placeholder="name@example.com" [(ngModel)]="email" name="email" required [disabled]="isLoading">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Password*</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" class="form-control" placeholder="Create a password" [(ngModel)]="password" name="password" required [disabled]="isLoading">
+                </div>
+            </div>
+              <div class="mb-3">
+                <label class="form-label">UserName</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control" placeholder="John Doe" [(ngModel)]="username" name="username" required [disabled]="isLoading">
+                </div>
+            </div>
+            <button (click)="onRegister()" class="btn btn-primary w-100 register-btn" [disabled]="isLoading">
+                <span>Sign Up</span>
+            </button>
+        </form>
+        <div class="text-center mt-3">
+            <p class="mb-0 text-white-50">Already have an account? <a routerLink="/login" class="text-info text-decoration-none">Login</a></p>
+        </div>
+    </div>
+</div>

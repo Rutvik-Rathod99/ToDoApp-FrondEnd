@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg fixed-top elegant-navbar">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" routerLink="/home">
+      <i class="bi bi-check2-square me-2 logo-icon"></i>
+      <span class="brand-text">Todo<span class="brand-accent">App</span></span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center gap-3">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{exact: true}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/about" routerLinkActive="active-link">About</a>
+        </li>
+        <li *ngIf="authService.isLoggedIn$ | async" class="nav-item">
+          <a class="nav-link" routerLink="/todos" routerLinkActive="active-link">Todos</a>
+        </li>
+        <li class="nav-item ms-lg-2">
+          @if (authService.isLoggedIn$ | async) {
+          <button (click)="logOut()" class="btn btn-connect">
+            <i class="bi bi-wallet2 me-2"></i>Logout
+          </button>
+          } @else {
+          <button class="btn btn-connect" routerLink="/login">
+            <i class="bi bi-wallet2 me-2"></i>Login
+          </button>
+          }
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="content-wrapper">
+  <router-outlet />
+</div>
