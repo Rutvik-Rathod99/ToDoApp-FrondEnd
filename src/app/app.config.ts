@@ -31,8 +31,8 @@ export const appConfig: ApplicationConfig = {
    // 1. Register OAuth client (for interceptor if needed)
     provideOAuthClient({
       resourceServer: {
-        allowedUrls: ['http://localhost:5000', 'https://localhost:702/'], // add your backend APIs
-        sendAccessToken: true,
+        allowedUrls: ['http://localhost:5000', 'https://localhost:7027'], // add your backend APIs
+        sendAccessToken: false,
       }
     }),
 

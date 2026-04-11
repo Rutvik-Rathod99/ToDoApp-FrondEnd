@@ -6,8 +6,8 @@ import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MessageService } from 'primeng/api';
-import { AuthService } from '../services/auth.service';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { Paginator, PaginatorModule, PaginatorState } from 'primeng/paginator';
 // Interfaces
 interface Todo {
   id: number;
@@ -27,40 +27,46 @@ interface PaginatedResponse {
   selector: 'app-todos',
   providers: [MessageService],
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule, ToastModule, ButtonModule, AvatarModule],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    FormsModule,
+    ToastModule,
+    ButtonModule,
+    AvatarModule,
+    PaginatorModule,
+  ],
   templateUrl: './todos.component.html',
   styleUrls: ['./todos.component.css'],
 })
 export class TodosComponent implements OnInit {
-  constructor(private messageService: MessageService, private httpClient: HttpClient,private oauthService : OAuthService) {
-  }
+  constructor(
+    private messageService: MessageService,
+    private httpClient: HttpClient,
+    private oauthService: OAuthService,
+  ) {}
   baseUrl: string = '';
   visible = false;
-  // private messageService = inject(MessageService);
+  todos = signal<Todo[]>([]);
+  totalCount = signal(0);
+  isLoading = signal(false);
+  currentPage = 1;
+  itemsPerPage = 5;
+  showModal = signal(false);
+  isEditing = signal(false);
+  currentTodoId: number = 0;
+  currentTodo: Partial<Todo> = {
+    title: '',
+    description: '',
+    isCompleted: false,
+  };
 
   getBaseUrl() {
     this.httpClient.get('/assets/web-api-config.json').subscribe((res: any) => {
       this.baseUrl = res.webApiUrl;
-      console.log(this.baseUrl);
       this.loadData(); // config load hone ke baad hi API call
     });
   }
-
-  // State Signals
-  todos = signal<Todo[]>([]);
-  totalCount = signal(0);
-  isLoading = signal(false);
-
-  // Pagination Signals
-  currentPage = signal(1);
-  itemsPerPage = 5;
-
-  // Modal Signals
-  showModal = signal(false);
-  isEditing = signal(false);
-  currentTodoId: number = 0;
-  currentTodo: Partial<Todo> = { title: '', description: '', isCompleted: false };
-
   ngOnInit() {
     this.getBaseUrl();
   }
@@ -68,7 +74,7 @@ export class TodosComponent implements OnInit {
   // --- Core Data Loading ---
   loadData() {
     this.isLoading.set(true);
-    const url = `${this.baseUrl}/todos/paginated?pageNumber=${this.currentPage()}&pageSize=${this.itemsPerPage}`;
+    const url = `${this.baseUrl}/todos/paginated?pageNumber=${this.currentPage}&pageSize=${this.itemsPerPage}`;
 
     this.httpClient.get<PaginatedResponse>(url).subscribe({
       next: (response) => {
@@ -79,7 +85,7 @@ export class TodosComponent implements OnInit {
       error: (err) => {
         console.error('Fetch error', err);
         this.isLoading.set(false);
-      }
+      },
     });
   }
 
@@ -92,7 +98,7 @@ export class TodosComponent implements OnInit {
 
   changePage(page: number) {
     if (page >= 1 && page <= this.totalPages()) {
-      this.currentPage.set(page);
+      this.currentPage = page;
       this.loadData(); // CRITICAL: Must re-fetch data when page changes
     }
   }
@@ -100,7 +106,7 @@ export class TodosComponent implements OnInit {
   // Helper for generating page numbers [1, 2, ..., 10]
   get visiblePages(): (number | string)[] {
     const total = this.totalPages();
-    const current = this.currentPage();
+    const current = this.currentPage;
 
     // Simple logic for small page counts
     if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
@@ -122,11 +128,18 @@ export class TodosComponent implements OnInit {
     return pages;
   }
 
-  // --- CRUD Operations ---
+  //PrimeNG Paginator Logic
+  onPageChange(event: PaginatorState) {
+    this.currentPage = event.first ?? 0 + 1;
+    this.itemsPerPage = event.rows ?? 5;
+    this.loadData();
+  }
 
   openModal(todo?: Todo) {
     this.isEditing.set(!!todo);
-    this.currentTodo = todo ? { ...todo } : { title: '', description: '', isCompleted: false };
+    this.currentTodo = todo
+      ? { ...todo }
+      : { title: '', description: '', isCompleted: false };
     this.showModal.set(true);
   }
 
@@ -140,7 +153,8 @@ export class TodosComponent implements OnInit {
 
     if (this.isEditing() && this.currentTodo.id) {
       // Update
-      this.httpClient.put(`${this.baseUrl}/todos/${this.currentTodo.id}`, this.currentTodo)
+      this.httpClient
+        .put(`${this.baseUrl}/todos/${this.currentTodo.id}`, this.currentTodo)
         .subscribe(() => {
           this.showToast('success', 'Success', 'Todo updated successfully.');
           this.loadData(); // Refresh current page
@@ -148,30 +162,29 @@ export class TodosComponent implements OnInit {
         });
     } else {
       // Create
-      this.httpClient.post(`${this.baseUrl}/todos`, this.currentTodo)
+      this.httpClient
+        .post(`${this.baseUrl}/todos`, this.currentTodo)
         .subscribe(() => {
           this.showToast('success', 'Success', 'Todo created successfully.');
-          this.currentPage.set(1); // Go to first page on new add
+          this.currentPage = 1;
           this.loadData();
           this.closeModal();
         });
     }
   }
+
   deleteTodo(id: number) {
     this.currentTodoId = id;
-    console.log("this.currentTodoId");
     this.showConfirm();
   }
 
-  // showToast(){
-  // this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Todo deleted successfully.' });
-
-  // }
-  // HTML Helper
   showToast(severity: string, summary: string, detail: string) {
-    this.messageService.add({ severity: severity, summary: summary, detail: detail });
+    this.messageService.add({
+      severity: severity,
+      summary: summary,
+      detail: detail,
+    });
   }
-
 
   showConfirm() {
     if (!this.visible) {
@@ -180,19 +193,20 @@ export class TodosComponent implements OnInit {
         sticky: true,
         severity: 'custom',
         summary: 'Are sure to delete this todo?',
-        styleClass: 'custom-toast-bg' 
+        styleClass: 'custom-toast-bg',
       });
       this.visible = true;
     }
   }
 
-
   onReject() {
     this.messageService.clear('confirm');
     this.visible = false;
   }
+
   onConfirm() {
-    this.httpClient.delete(`${this.baseUrl}/todos/${this.currentTodoId}`)
+    this.httpClient
+      .delete(`${this.baseUrl}/todos/${this.currentTodoId}`)
       .subscribe(() => {
         this.showToast('success', 'Success', 'Todo deleted successfully.');
         this.loadData();
@@ -200,20 +214,27 @@ export class TodosComponent implements OnInit {
         this.messageService.clear('confirm');
       });
   }
-  asNumber(val: any): number { return Number(val); }
-  get userName(): string {
-  if (this.oauthService.hasValidIdToken()) {
-    const claims = this.oauthService.getIdentityClaims() as any;
-    return claims['name'] || claims['preferred_username'] || 'User';
+
+  asNumber(val: any): number {
+    return Number(val);
   }
-  return 'Guest';
-}
 
-get userInitials(): string {
-  const name = this.userName;
-  if (name === 'Guest') return 'G';
-  return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-}
-}
+  get userName(): string {
+    if (this.oauthService.hasValidIdToken()) {
+      const claims = this.oauthService.getIdentityClaims() as any;
+      return claims['name'] || claims['preferred_username'] || 'User';
+    }
+    return 'Guest';
+  }
 
-
+  get userInitials(): string {
+    const name = this.userName;
+    if (name === 'Guest') return 'G';
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  }
+}

@@ -31,7 +31,7 @@
                 <p class="mb-0 text-white-50">Forgot Password? <a routerLink="/forgot-password"
                         class="text-info text-decoration-none">Reset Password</a></p>
             </div>
-            <button (click)="googleLogin()" type="submit" class="btn btn-primary w-100 login-btn" [disabled]="isLoading">
+            <button (click)="googleLogin()" type="button" class="btn btn-primary w-100 login-btn" [disabled]="isLoading">
                 <svg preserveAspectRatio="xMidYMin" width="20" height="20" viewBox="0 0 24 24" fill="unset"
                     class="Icon-module__CwnszW__icon " aria-hidden="true"
                     style="--Icon--size: 20px; --Icon--rotate: 0deg; width: 20px; height: 20px;">
@@ -50,7 +50,7 @@
                 </svg>
                 <span class="mx-3" >Login With Google</span>
             </button>
-            <button (click)="microsoftLogin()" type="submit" class="btn btn-primary w-100 login-btn" [disabled]="isLoading">
+            <button (click)="microsoftLogin()" type="button" class="btn btn-primary w-100 login-btn" [disabled]="isLoading">
                 <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none"
                     xmlns="http://www.w3.org/2000/svg" itemprop="logo" itemscope="itemscope">
                     <path d="M11.5216 0.5H0V11.9067H11.5216V0.5Z" fill="#f25022"></path>
@@ -67,3 +67,4 @@
         </div>
     </div>
 </div>
+<p-toast></p-toast>

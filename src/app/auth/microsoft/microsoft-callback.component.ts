@@ -15,17 +15,13 @@ export class MicrosoftCallbackComponent {
   async ngOnInit(): Promise<void> {
     const result = await this.auth.processMicrosoftLogin()
     if (result) {
-      console.log('in if part')
       result.subscribe((token: any) => {
-        console.log('got response', result)
-        localStorage.setItem('token', token.token);
+        this.auth.login(token.token);
         this.router.navigate(['/todos'])
       }, (error: any) => {
-        console.log('error', error)
         this.router.navigate(['/login']);
       })
     } else {
-      console.log('in else part')
       this.router.navigate(['/login']);
     }
   }

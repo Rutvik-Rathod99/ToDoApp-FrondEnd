@@ -22,15 +22,44 @@
                     <input type="password" class="form-control" placeholder="Create a password" [(ngModel)]="password" name="password" required [disabled]="isLoading">
                 </div>
             </div>
-              <div class="mb-3">
+            <div class="mb-3">
                 <label class="form-label">UserName</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-person"></i></span>
                     <input type="text" class="form-control" placeholder="John Doe" [(ngModel)]="username" name="username" required [disabled]="isLoading">
                 </div>
             </div>
-            <button (click)="onRegister()" class="btn btn-primary w-100 register-btn" [disabled]="isLoading">
+            <button (click)="onRegister()" class="btn btn-primary w-100 register-btn mb-2" [disabled]="isLoading">
                 <span>Sign Up</span>
+            </button>
+            <button (click)="googleLogin()" type="button" class="btn btn-primary w-100 register-btn mt-3" [disabled]="isLoading">
+                <svg preserveAspectRatio="xMidYMin" width="20" height="20" viewBox="0 0 24 24" fill="unset"
+                    class="Icon-module__CwnszW__icon " aria-hidden="true"
+                    style="--Icon--size: 20px; --Icon--rotate: 0deg; width: 20px; height: 20px;">
+                    <path fill="#4285F4" fill-rule="evenodd"
+                        d="M21.6 12.227c0-.71-.064-1.391-.182-2.046H12v3.869h5.382a4.6 4.6 0 0 1-1.996 3.018v2.509h3.232c1.891-1.741 2.982-4.305 2.982-7.35Z"
+                        clip-rule="evenodd"></path>
+                    <path fill="#34A853" fill-rule="evenodd"
+                        d="M12 22c2.7 0 4.963-.896 6.618-2.423l-3.232-2.509c-.895.6-2.04.955-3.386.955-2.605 0-4.81-1.76-5.596-4.123h-3.34v2.59A9.996 9.996 0 0 0 12 22Z"
+                        clip-rule="evenodd"></path>
+                    <path fill="#FBBC05" fill-rule="evenodd"
+                        d="M6.405 13.9c-.2-.6-.314-1.241-.314-1.9 0-.66.114-1.3.314-1.9V7.509H3.064A9.996 9.996 0 0 0 2 11.999c0 1.614.386 3.142 1.064 4.492l3.34-2.591Z"
+                        clip-rule="evenodd"></path>
+                    <path fill="#EA4335" fill-rule="evenodd"
+                        d="M12 5.977c1.468 0 2.786.505 3.822 1.496l2.869-2.868C16.959 2.99 14.695 2 12 2 8.09 2 4.709 4.24 3.063 7.51l3.341 2.59C7.191 7.736 9.395 5.977 12 5.977Z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="mx-3" >Sign up With Google</span>
+            </button>
+            <button (click)="microsoftLogin()" type="button" class="btn btn-primary w-100 register-btn mt-3" [disabled]="isLoading">
+                <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg" itemprop="logo" itemscope="itemscope">
+                    <path d="M11.5216 0.5H0V11.9067H11.5216V0.5Z" fill="#f25022"></path>
+                    <path d="M24.2418 0.5H12.7202V11.9067H24.2418V0.5Z" fill="#7fba00"></path>
+                    <path d="M11.5216 13.0933H0V24.5H11.5216V13.0933Z" fill="#00a4ef"></path>
+                    <path d="M24.2418 13.0933H12.7202V24.5H24.2418V13.0933Z" fill="#ffb900"></path>
+                </svg>
+                <span class="mx-2" >Sign up With Microsoft</span>
             </button>
         </form>
         <div class="text-center mt-3">
@@ -38,3 +67,4 @@
         </div>
     </div>
 </div>
+<p-toast></p-toast>

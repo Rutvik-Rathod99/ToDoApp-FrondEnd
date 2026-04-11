@@ -12,7 +12,7 @@ import { ToastModule } from 'primeng/toast';
 })
 export class AppComponent {
   title = 'angular-todo-app';
-  constructor(public authService: AuthService, private router: Router){}
+  constructor(public authService: AuthService, public router: Router){}
 
   logOut() {
     this.authService.logout();
