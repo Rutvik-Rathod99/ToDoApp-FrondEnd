@@ -92,46 +92,51 @@ export class TodosComponent implements OnInit {
   // --- Pagination Logic ---
   // Fix: Since the server gives us exactly 5 items, we just return them.
   // No need to slice again on the client side.
-  paginatedTodos = computed(() => this.todos());
+  // paginatedTodos = computed(() => this.todos());
 
-  totalPages = computed(() => Math.ceil(this.totalCount() / this.itemsPerPage));
+  // totalPages = computed(() => Math.ceil(this.totalCount() / this.itemsPerPage));
 
-  changePage(page: number) {
-    if (page >= 1 && page <= this.totalPages()) {
-      this.currentPage = page;
-      this.loadData(); // CRITICAL: Must re-fetch data when page changes
-    }
-  }
+  // changePage(page: number) {
+  //   if (page >= 1 && page <= this.totalPages()) {
+  //     this.currentPage = page;
+  //     this.loadData(); // CRITICAL: Must re-fetch data when page changes
+  //   }
+  // }
 
-  // Helper for generating page numbers [1, 2, ..., 10]
-  get visiblePages(): (number | string)[] {
-    const total = this.totalPages();
-    const current = this.currentPage;
+  // // Helper for generating page numbers [1, 2, ..., 10]
+  // get visiblePages(): (number | string)[] {
+  //   const total = this.totalPages();
+  //   const current = this.currentPage;
 
-    // Simple logic for small page counts
-    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  //   // Simple logic for small page counts
+  //   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
 
-    // Complex logic for many pages (adds "...")
-    const pages: (number | string)[] = [1];
-    if (current > 4) pages.push('...');
+  //   // Complex logic for many pages (adds "...")
+  //   const pages: (number | string)[] = [1];
+  //   if (current > 4) pages.push('...');
 
-    const start = Math.max(2, current - 1);
-    const end = Math.min(total - 1, current + 1);
+  //   const start = Math.max(2, current - 1);
+  //   const end = Math.min(total - 1, current + 1);
 
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
+  //   for (let i = start; i <= end; i++) {
+  //     pages.push(i);
+  //   }
 
-    if (current < total - 3) pages.push('...');
-    if (total > 1) pages.push(total);
+  //   if (current < total - 3) pages.push('...');
+  //   if (total > 1) pages.push(total);
 
-    return pages;
-  }
+  //   return pages;
+  // }
 
-  //PrimeNG Paginator Logic
+  // PrimeNG Paginator Logic
   onPageChange(event: PaginatorState) {
-    this.currentPage = event.first ?? 0 + 1;
-    this.itemsPerPage = event.rows ?? 5;
+    const rows = event.rows ?? this.itemsPerPage;
+    const pageIndex = typeof (event as any).page === 'number'
+      ? (event as any).page
+      : Math.floor((event.first ?? 0) / rows);
+
+    this.itemsPerPage = rows;
+    this.currentPage = Math.max(1, pageIndex + 1);
     this.loadData();
   }
 

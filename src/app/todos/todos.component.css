@@ -52,6 +52,31 @@
 /* ... existing keyframes ... */
 
 /* Table Styles - Refined for Dark Mode */
+.table-scroll {
+    max-height: 520px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.table-scroll::-webkit-scrollbar {
+    width: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.04);
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+    background: rgba(79, 172, 254, 0.4);
+    border-radius: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(79, 172, 254, 0.6);
+}
+
 .custom-table {
     margin-bottom: 0;
     color: #e0e0e0;
@@ -274,10 +299,9 @@
 /* Modal Custom */
 .modal-backdrop-custom {
     position: fixed;
-    top: 10vh;
-    left: 0;
+    inset: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
     z-index: 1000;
@@ -295,6 +319,8 @@
     padding: 2rem;
     width: 90%;
     max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     animation: slideUp 0.3s ease;
 }

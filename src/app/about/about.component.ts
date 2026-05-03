@@ -7,5 +7,8 @@ import { Component } from '@angular/core';
   styleUrl: './about.component.css'
 })
 export class AboutComponent {
-
+   private title : string = "About Us";   
+   ngOnInit() { 
+      
+   }
 }

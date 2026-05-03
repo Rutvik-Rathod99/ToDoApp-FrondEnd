@@ -15,45 +15,47 @@
             </button>
         </div>
         <div class="container">
-            @if(totalCount() > 0){
-            <table class="table custom-table table-borderless text-center">
-                <thead>
-                    <tr>
-                        <th scope="col" class="text-start ps-4">Title</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let todo of paginatedTodos()" class="fade-in-row">
-                        <td class="text-start ps-4">{{todo.title}}</td>
-                        <td>
-                            <span
-                                [class]="todo.isCompleted ? 'badge bg-success status-badge' : 'badge bg-warning text-dark status-badge'">
-                                {{todo.isCompleted ? 'Completed' : 'Pending'}}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-outline-danger icon-btn border-0" title="Delete"
-                                    (click)="deleteTodo(todo.id)">
-                                    <i class="bi bi-trash3"></i>
-                                </button>
-                                <button class="btn btn-outline-info icon-btn border-0 text-white" title="Edit"
-                                    (click)="openModal(todo)">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            }
-            @else{
-            <div class="text-center">
-                <p class="text-white">No tasks found.</p>
-            </div>
-            }
+            <ng-container *ngIf="totalCount() > 0; else noTasks">
+                <div class="table-scroll">
+                    <table class="table custom-table table-borderless text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-start ps-4">Title</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let todo of todos()" class="fade-in-row">
+                                <td class="text-start ps-4">{{todo.title}}</td>
+                                <td>
+                                    <span
+                                        [class]="todo.isCompleted ? 'badge bg-success status-badge' : 'badge bg-warning text-dark status-badge'">
+                                        {{todo.isCompleted ? 'Completed' : 'Pending'}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-outline-danger icon-btn border-0" title="Delete"
+                                            (click)="deleteTodo(todo.id)">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info icon-btn border-0 text-white" title="Edit"
+                                            (click)="openModal(todo)">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-container>
+            <ng-template #noTasks>
+                <div class="text-center">
+                    <p class="text-white">No tasks found.</p>
+                </div>
+            </ng-template>
         </div>
         <!-- Pagination Controls -->
         <!-- <div class="d-flex justify-content-center align-items-center mt-4 gap-2">
@@ -74,9 +76,16 @@
                 <i class="bi bi-chevron-right"></i>
             </button>
         </div> -->
-        <h1>fdgdf</h1>
-        <div class="card flex justify-center">
-            <p-paginator (onPageChange)="onPageChange($event)" [first]="currentPage" [rows]="itemsPerPage" [totalRecords]="120" [rowsPerPageOptions]="[10, 20, 30]" />
+        <div class="card flex justify-center" *ngIf="totalCount() > 0">
+            <p-paginator
+                (onPageChange)="onPageChange($event)"
+                [first]="(currentPage - 1) * itemsPerPage"
+                [rows]="itemsPerPage"
+                [totalRecords]="totalCount()"
+                [rowsPerPageOptions]="[5, 10, 30]"
+                [showFirstLastIcon]="true"
+                [pageLinkSize]="3"
+            ></p-paginator>
         </div>
     </ng-container>
 
