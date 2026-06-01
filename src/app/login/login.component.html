@@ -26,6 +26,10 @@
             </div>
             <button type="submit" class="btn btn-primary w-100 login-btn" [disabled]="isLoading">
                 <span *ngIf="!isLoading">Login</span>
+                <span *ngIf="isLoading">
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Logging in...
+                </span>
             </button>
             <div class="text-center mt-3">
                 <p class="mb-0 text-white-50">Forgot Password? <a routerLink="/forgot-password"

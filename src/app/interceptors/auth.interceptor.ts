@@ -6,7 +6,7 @@ export class AuthInterceptor implements HttpInterceptor {
         if (req.url.includes('login.microsoftonline.com')) {
             return next.handle(req);
         }
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (token) {
             const clonedReq = req.clone({
                 headers: req.headers.set('Authorization', `Bearer ${token}`)

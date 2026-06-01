@@ -425,3 +425,22 @@ select.custom-input option {
     background-color: rgba(255, 255, 255, 0.1) !important;
     color: #ffffff !important;
 }
+
+/* Custom Checkbox */
+.custom-checkbox {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+}
+
+.custom-checkbox:checked {
+    background-color: #4facfe;
+    border-color: #4facfe;
+}
+
+.custom-checkbox:focus {
+    box-shadow: 0 0 0 0.25rem rgba(79, 172, 254, 0.25);
+    border-color: #4facfe;
+}

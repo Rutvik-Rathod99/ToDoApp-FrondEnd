@@ -30,7 +30,11 @@
                 </div>
             </div>
             <button (click)="onRegister()" class="btn btn-primary w-100 register-btn mb-2" [disabled]="isLoading">
-                <span>Sign Up</span>
+                <span *ngIf="!isLoading">Sign Up</span>
+                <span *ngIf="isLoading">
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Registering...
+                </span>
             </button>
             <button (click)="googleLogin()" type="button" class="btn btn-primary w-100 register-btn mt-3" [disabled]="isLoading">
                 <svg preserveAspectRatio="xMidYMin" width="20" height="20" viewBox="0 0 24 24" fill="unset"

@@ -6,8 +6,7 @@ import { Component } from '@angular/core';
   templateUrl: './about.component.html',
   styleUrl: './about.component.css'
 })
-export class AboutComponent {
-   private title : string = "About Us";   
+export class AboutComponent { 
    ngOnInit() { 
       
    }

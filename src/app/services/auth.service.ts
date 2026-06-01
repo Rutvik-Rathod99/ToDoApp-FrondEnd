@@ -10,17 +10,24 @@ import { microsoftAuthConfig } from '../config/auth/microsft-auth.config';
 export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
   isLoggedIn$ = this.loggedIn.asObservable();
+  
+  private authLoading = new BehaviorSubject<boolean>(false);
+  isAuthLoading$ = this.authLoading.asObservable();
+
+  setLoading(loading: boolean) {
+    this.authLoading.next(loading);
+  }
   constructor(private oauthService: OAuthService, private http: HttpClient) { }
 
   private hasToken() {
-    return !!localStorage.getItem('token');
+    return !!sessionStorage.getItem('token');
   }
   login(token:string) {
-    localStorage.setItem('token', token);
+    sessionStorage.setItem('token', token);
     this.loggedIn.next(true);
   }
   logout() {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     this.loggedIn.next(false);
   }
 

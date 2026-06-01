@@ -28,6 +28,7 @@ export class RegisterComponent {
     console.log("inside on register")
     if (this.email && this.password) {
       this.isLoading = true;
+      this.authService.setLoading(true);
       this.httpClient
         .post('https://localhost:7027/api/auth/register', {
           username: this.username ?? "",
@@ -39,10 +40,12 @@ export class RegisterComponent {
             this.authService.login(val.token);
             this.showToast('success', 'Success', 'Register Successfully...');
             this.isLoading = false;
+            this.authService.setLoading(false);
             this.router.navigate(['/todos']);
           },
           error: (error: any) => {
             this.isLoading = false;
+            this.authService.setLoading(false);
             this.showToast('error', 'Error in Register...',error.error);
           },
         });

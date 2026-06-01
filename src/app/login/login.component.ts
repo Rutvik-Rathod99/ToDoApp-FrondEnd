@@ -25,6 +25,7 @@ export class LoginComponent {
   onLogin() {
     if (this.email && this.password) {
       this.isLoading = true;
+      this.authService.setLoading(true);
       this.httpClient
         .post('http://localhost:5177/api/auth/login', {
           email: this.email,
@@ -32,14 +33,16 @@ export class LoginComponent {
         })
         .subscribe({
           next: (val: any) => {
-            localStorage.setItem('token', val.token)
+            sessionStorage.setItem('token', val.token)
             this.authService.login(val.token);
             this.showToast('success', 'Success', 'Login Successfully...');
             this.isLoading = false;
+            this.authService.setLoading(false);
             this.router.navigate(['/todos']);
           },
           error: (error: any) => {
             this.isLoading = false;
+            this.authService.setLoading(false);
             this.showToast('error', 'Login Failed', error.error || 'Invalid credentials');
           },
         });

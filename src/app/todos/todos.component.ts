@@ -1,4 +1,5 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -54,7 +55,8 @@ export class TodosComponent implements OnInit {
   itemsPerPage = 5;
   showModal = signal(false);
   isEditing = signal(false);
-  currentTodoId: number = 0;
+  currentTodoIds: number[] = [];
+  selectedTodoIds = signal<Set<number>>(new Set());
   currentTodo: Partial<Todo> = {
     title: '',
     description: '',
@@ -80,6 +82,8 @@ export class TodosComponent implements OnInit {
       next: (response) => {
         this.todos.set(response.todos);
         this.totalCount.set(response.totalCount);
+        // Clear selection on page change or refresh
+        this.selectedTodoIds.set(new Set());
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -179,8 +183,71 @@ export class TodosComponent implements OnInit {
   }
 
   deleteTodo(id: number) {
-    this.currentTodoId = id;
+    this.currentTodoIds = [id];
     this.showConfirm();
+  }
+
+  deleteSelectedTodos() {
+    this.currentTodoIds = Array.from(this.selectedTodoIds());
+    if (this.currentTodoIds.length === 0) return;
+    this.showConfirm();
+  }
+
+  performDeletion() {
+    if (this.currentTodoIds.length === 0) return;
+
+    let deleteRequest;
+    let successMessage: string;
+
+    deleteRequest = this.httpClient.delete(`${this.baseUrl}/todos/deleteMultiple?ids=${this.currentTodoIds.join(',')}`);
+    successMessage = `${this.currentTodoIds.length} Todos deleted successfully.`;
+    
+    deleteRequest.subscribe({
+      next: () => {
+        this.showToast('success', 'Success', successMessage);
+        this.selectedTodoIds.set(new Set());
+        this.currentTodoIds = [];
+        this.loadData();
+        this.messageService.clear('confirm');
+        setTimeout(() => {
+          this.visible = false;
+        }, 300);
+      },
+      error: (err) => {
+        console.error('Delete error', err);
+        this.showToast('error', 'Error', 'Failed to delete todos.');
+        this.messageService.clear('confirm');
+        setTimeout(() => {
+          this.visible = false;
+        }, 300);
+      }
+    });
+  }
+
+  toggleSelection(id: number) {
+    const current = this.selectedTodoIds();
+    const updated = new Set(current);
+    if (updated.has(id)) {
+      updated.delete(id);
+    } else {
+      updated.add(id);
+    }
+    this.selectedTodoIds.set(updated);
+  }
+
+  toggleAll(event: any) {
+    const isChecked = event.target.checked;
+    if (isChecked) {
+      const allIds = new Set(this.todos().map(t => t.id));
+      this.selectedTodoIds.set(allIds);
+    } else {
+      this.selectedTodoIds.set(new Set());
+    }
+  }
+
+  isAllSelected(): boolean {
+    const todos = this.todos();
+    return todos.length > 0 && todos.every(t => this.selectedTodoIds().has(t.id));
   }
 
   showToast(severity: string, summary: string, detail: string) {
@@ -193,11 +260,14 @@ export class TodosComponent implements OnInit {
 
   showConfirm() {
     if (!this.visible) {
+      const msg = this.currentTodoIds.length > 1 
+        ? `Are you sure you want to delete these ${this.currentTodoIds.length} tasks?` 
+        : 'Are you sure you want to delete this task?';
       this.messageService.add({
         key: 'confirm',
         sticky: true,
         severity: 'custom',
-        summary: 'Are sure to delete this todo?',
+        summary: msg,
         styleClass: 'custom-toast-bg',
       });
       this.visible = true;
@@ -206,18 +276,13 @@ export class TodosComponent implements OnInit {
 
   onReject() {
     this.messageService.clear('confirm');
-    this.visible = false;
+    setTimeout(() => {
+      this.visible = false;
+    }, 300);
   }
 
   onConfirm() {
-    this.httpClient
-      .delete(`${this.baseUrl}/todos/${this.currentTodoId}`)
-      .subscribe(() => {
-        this.showToast('success', 'Success', 'Todo deleted successfully.');
-        this.loadData();
-        this.visible = false;
-        this.messageService.clear('confirm');
-      });
+    this.performDeletion();
   }
 
   asNumber(val: any): number {

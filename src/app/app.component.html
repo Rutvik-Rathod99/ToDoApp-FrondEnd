@@ -2,7 +2,7 @@
   <div class="container-fluid px-4">
     <a class="navbar-brand" routerLink="/home">
       <i class="bi bi-check2-square me-2 logo-icon"></i>
-      <span class="brand-text">Todo<span class="brand-accent">App</span></span>
+      <span class="brand-text">Task<span class="brand-accent">Flow</span></span>
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -27,6 +27,15 @@
           <button (click)="logOut()" class="btn btn-connect">
             <i class="bi bi-wallet2 me-2"></i>Logout
           </button>
+          } @else if (authService.isAuthLoading$ | async) {
+            <button class="btn btn-connect" disabled>
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              @if (router.url === '/register') {
+                Registering...
+              } @else {
+                Logging in...
+              }
+            </button>
           } @else {
             @if (router.url === '/login') {
               <button class="btn btn-connect" routerLink="/register">
